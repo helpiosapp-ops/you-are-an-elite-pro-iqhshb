@@ -120,15 +120,6 @@ export default function HomeScreen() {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={handleReset}>
-              <IconSymbol
-                ios_icon_name="chevron.left"
-                android_material_icon_name="arrow-back"
-                size={24}
-                color={colors.text}
-              />
-            </TouchableOpacity>
-
             <ScrollView 
               style={styles.scrollView}
               contentContainerStyle={styles.inputScrollContent}
@@ -201,15 +192,6 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleReset}>
-        <IconSymbol
-          ios_icon_name="chevron.left"
-          android_material_icon_name="arrow-back"
-          size={24}
-          color={colors.text}
-        />
-      </TouchableOpacity>
-
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.resultsContent}
@@ -274,16 +256,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  backButton: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    zIndex: 10,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   header: {
     paddingTop: 80,
