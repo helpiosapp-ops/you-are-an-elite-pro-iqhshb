@@ -16,17 +16,33 @@ const SCENARIOS = [
   { id: 'clients', label: 'Waiting to switch clients', icon: 'swap-horiz' },
 ];
 
-// CRITICAL FIX: Use calendar hours/days for accurate calculations across ALL scenarios
-// This ensures expense-based scenarios (debt, subscriptions) calculate correctly
+// DEFINITIVE CALCULATION MULTIPLIERS
+// These convert any time unit to YEARLY loss
+// Formula: yearlyLoss = amount × multiplier
 const TIME_UNITS = [
-  { id: 'hour', label: 'per hour', multiplier: 8760 }, // 24 hrs/day * 365 days/year = 8760
-  { id: 'day', label: 'per day', multiplier: 365 }, // Calendar days per year
-  { id: 'month', label: 'per month', multiplier: 12 },
-  { id: 'year', label: 'per year', multiplier: 1 },
+  { 
+    id: 'hour', 
+    label: 'per hour', 
+    multiplier: 8760 // 24 hours/day × 365 days/year = 8760 hours/year
+  },
+  { 
+    id: 'day', 
+    label: 'per day', 
+    multiplier: 365 // 365 days per calendar year
+  },
+  { 
+    id: 'month', 
+    label: 'per month', 
+    multiplier: 12 // 12 months per year
+  },
+  { 
+    id: 'year', 
+    label: 'per year', 
+    multiplier: 1 // 1 year per year
+  },
 ];
 
 // Emotional comparisons based on 5-year loss amount
-// All hints now specifically reference "over 5 years"
 const getComparison = (fiveYearLoss: number) => {
   if (fiveYearLoss >= 500000) return "That's a luxury car over 5 years";
   if (fiveYearLoss >= 250000) return "That's a significant down payment on a house over 5 years";
@@ -44,12 +60,24 @@ export default function HomeScreen() {
   const [amount, setAmount] = useState<string>('');
   const [timeUnit, setTimeUnit] = useState<string>('month');
   
-  // Calculated values
+  // CALCULATION LOGIC - DEFINITIVE VERSION
+  // Step 1: Parse the input amount
   const numAmount = parseFloat(amount) || 0;
+  
+  // Step 2: Find the selected time unit and its multiplier
   const selectedTimeUnit = TIME_UNITS.find(t => t.id === timeUnit);
-  const yearlyLoss = numAmount * (selectedTimeUnit?.multiplier || 1);
+  const multiplier = selectedTimeUnit?.multiplier || 1;
+  
+  // Step 3: Calculate yearly loss (this is the foundation)
+  const yearlyLoss = numAmount * multiplier;
+  
+  // Step 4: Derive monthly loss from yearly
   const monthlyLoss = yearlyLoss / 12;
+  
+  // Step 5: Calculate 5-year loss from yearly
   const fiveYearLoss = yearlyLoss * 5;
+  
+  // Step 6: Get emotional comparison
   const comparison = getComparison(fiveYearLoss);
 
   const handleScenarioSelect = (scenarioId: string) => {
@@ -59,7 +87,15 @@ export default function HomeScreen() {
   };
 
   const handleCalculate = () => {
-    console.log('Calculating loss:', { amount, timeUnit, yearlyLoss, fiveYearLoss, multiplier: selectedTimeUnit?.multiplier });
+    console.log('=== CALCULATION DETAILS ===');
+    console.log('Input Amount:', numAmount);
+    console.log('Time Unit:', timeUnit);
+    console.log('Multiplier:', multiplier);
+    console.log('Yearly Loss:', yearlyLoss, '(', numAmount, '×', multiplier, ')');
+    console.log('Monthly Loss:', monthlyLoss, '(', yearlyLoss, '÷ 12 )');
+    console.log('5-Year Loss:', fiveYearLoss, '(', yearlyLoss, '× 5 )');
+    console.log('===========================');
+    
     Keyboard.dismiss();
     if (numAmount > 0) {
       setStep('results');
@@ -192,6 +228,7 @@ export default function HomeScreen() {
   }
 
   // RESULTS SCREEN
+  // Format numbers for display (no decimals for cleaner look)
   const monthlyLossFormatted = monthlyLoss.toLocaleString('en-US', { maximumFractionDigits: 0 });
   const yearlyLossFormatted = yearlyLoss.toLocaleString('en-US', { maximumFractionDigits: 0 });
   const fiveYearLossFormatted = fiveYearLoss.toLocaleString('en-US', { maximumFractionDigits: 0 });
