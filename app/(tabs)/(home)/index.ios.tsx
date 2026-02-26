@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { colors } from "@/styles/commonStyles";
 import { IconSymbol } from "@/components/IconSymbol";
 
@@ -55,6 +55,7 @@ export default function HomeScreen() {
 
   const handleCalculate = () => {
     console.log('Calculating loss:', { amount, timeUnit, yearlyLoss });
+    Keyboard.dismiss();
     if (numAmount > 0) {
       setStep('results');
     }
@@ -112,65 +113,85 @@ export default function HomeScreen() {
 
   if (step === 'input') {
     return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={handleReset}>
-          <IconSymbol
-            ios_icon_name="chevron.left"
-            android_material_icon_name="arrow-back"
-            size={24}
-            color={colors.text}
-          />
-        </TouchableOpacity>
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior="padding"
+        keyboardVerticalOffset={0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={handleReset}>
+              <IconSymbol
+                ios_icon_name="chevron.left"
+                android_material_icon_name="arrow-back"
+                size={24}
+                color={colors.text}
+              />
+            </TouchableOpacity>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>{scenarioLabel}</Text>
-          <Text style={styles.inputSubtitle}>How much are you losing?</Text>
+            <ScrollView 
+              style={styles.scrollView}
+              contentContainerStyle={styles.inputScrollContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>{scenarioLabel}</Text>
+                <Text style={styles.inputSubtitle}>How much are you losing?</Text>
 
-          <View style={styles.amountInputContainer}>
-            <Text style={styles.dollarSign}>$</Text>
-            <TextInput
-              style={styles.amountInput}
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.textSecondary}
-              autoFocus
-            />
-          </View>
+                <View style={styles.amountInputContainer}>
+                  <Text style={styles.dollarSign}>$</Text>
+                  <TextInput
+                    style={styles.amountInput}
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor={colors.textSecondary}
+                    autoFocus
+                    returnKeyType="done"
+                    onSubmitEditing={Keyboard.dismiss}
+                  />
+                </View>
 
-          <View style={styles.timeUnitContainer}>
-            {TIME_UNITS.map((unit) => {
-              const isSelected = timeUnit === unit.id;
-              return (
+                <View style={styles.timeUnitContainer}>
+                  {TIME_UNITS.map((unit) => {
+                    const isSelected = timeUnit === unit.id;
+                    return (
+                      <TouchableOpacity
+                        key={unit.id}
+                        style={[
+                          styles.timeUnitButton,
+                          isSelected && styles.timeUnitButtonSelected
+                        ]}
+                        onPress={() => {
+                          setTimeUnit(unit.id);
+                          Keyboard.dismiss();
+                        }}
+                      >
+                        <Text style={[
+                          styles.timeUnitText,
+                          isSelected && styles.timeUnitTextSelected
+                        ]}>
+                          {unit.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
                 <TouchableOpacity
-                  key={unit.id}
-                  style={[
-                    styles.timeUnitButton,
-                    isSelected && styles.timeUnitButtonSelected
-                  ]}
-                  onPress={() => setTimeUnit(unit.id)}
+                  style={[styles.calculateButton, numAmount === 0 && styles.calculateButtonDisabled]}
+                  onPress={handleCalculate}
+                  disabled={numAmount === 0}
                 >
-                  <Text style={[
-                    styles.timeUnitText,
-                    isSelected && styles.timeUnitTextSelected
-                  ]}>
-                    {unit.label}
-                  </Text>
+                  <Text style={styles.calculateButtonText}>Calculate the cost</Text>
                 </TouchableOpacity>
-              );
-            })}
+              </View>
+            </ScrollView>
           </View>
-
-          <TouchableOpacity
-            style={[styles.calculateButton, numAmount === 0 && styles.calculateButtonDisabled]}
-            onPress={handleCalculate}
-            disabled={numAmount === 0}
-          >
-            <Text style={styles.calculateButtonText}>Calculate the cost</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -303,11 +324,15 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginLeft: 16,
   },
+  inputScrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingTop: 100,
+    paddingBottom: 40,
+  },
   inputContainer: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 40,
   },
   inputTitle: {
     fontSize: 20,
