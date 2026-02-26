@@ -19,8 +19,8 @@ const SCENARIOS = [
 // CRITICAL FIX: Use calendar hours/days for accurate calculations across ALL scenarios
 // This ensures expense-based scenarios (debt, subscriptions) calculate correctly
 const TIME_UNITS = [
-  { id: 'hour', label: 'per hour', multiplier: 8766 }, // 24 hrs/day * 365.25 days/year
-  { id: 'day', label: 'per day', multiplier: 365.00 }, // Calendar days per year
+  { id: 'hour', label: 'per hour', multiplier: 8760 }, // 24 hrs/day * 365 days/year = 8760
+  { id: 'day', label: 'per day', multiplier: 365 }, // Calendar days per year
   { id: 'month', label: 'per month', multiplier: 12 },
   { id: 'year', label: 'per year', multiplier: 1 },
 ];
