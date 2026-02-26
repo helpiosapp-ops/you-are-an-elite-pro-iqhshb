@@ -16,9 +16,11 @@ const SCENARIOS = [
   { id: 'clients', label: 'Waiting to switch clients', icon: 'swap-horiz' },
 ];
 
+// CRITICAL FIX: Use calendar hours/days for accurate calculations across ALL scenarios
+// This ensures expense-based scenarios (debt, subscriptions) calculate correctly
 const TIME_UNITS = [
-  { id: 'hour', label: 'per hour', multiplier: 2080 }, // 40 hrs/week * 52 weeks
-  { id: 'day', label: 'per day', multiplier: 260 }, // ~260 work days/year
+  { id: 'hour', label: 'per hour', multiplier: 8766 }, // 24 hrs/day * 365.25 days/year
+  { id: 'day', label: 'per day', multiplier: 365.25 }, // Calendar days per year (accounting for leap years)
   { id: 'month', label: 'per month', multiplier: 12 },
   { id: 'year', label: 'per year', multiplier: 1 },
 ];
@@ -56,7 +58,7 @@ export default function HomeScreen() {
   };
 
   const handleCalculate = () => {
-    console.log('Calculating loss:', { amount, timeUnit, yearlyLoss });
+    console.log('Calculating loss:', { amount, timeUnit, yearlyLoss, multiplier: selectedTimeUnit?.multiplier });
     Keyboard.dismiss();
     if (numAmount > 0) {
       setStep('results');
