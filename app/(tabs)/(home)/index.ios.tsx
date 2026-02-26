@@ -20,7 +20,7 @@ const SCENARIOS = [
 // This ensures expense-based scenarios (debt, subscriptions) calculate correctly
 const TIME_UNITS = [
   { id: 'hour', label: 'per hour', multiplier: 8766 }, // 24 hrs/day * 365.25 days/year
-  { id: 'day', label: 'per day', multiplier: 365.25 }, // Calendar days per year (accounting for leap years)
+  { id: 'day', label: 'per day', multiplier: 365.00 }, // Calendar days per year
   { id: 'month', label: 'per month', multiplier: 12 },
   { id: 'year', label: 'per year', multiplier: 1 },
 ];
