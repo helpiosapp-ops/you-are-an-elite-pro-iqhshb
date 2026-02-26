@@ -25,16 +25,17 @@ const TIME_UNITS = [
   { id: 'year', label: 'per year', multiplier: 1 },
 ];
 
-// Emotional comparisons based on amount
-const getComparison = (yearlyLoss: number) => {
-  if (yearlyLoss >= 100000) return "That's a luxury car";
-  if (yearlyLoss >= 50000) return "That's a year of rent";
-  if (yearlyLoss >= 20000) return "That's a dream vacation";
-  if (yearlyLoss >= 10000) return "That's months of groceries";
-  if (yearlyLoss >= 5000) return "That's a new laptop";
-  if (yearlyLoss >= 2000) return "That's a weekend getaway";
-  if (yearlyLoss >= 1000) return "That's dinner for two, weekly";
-  return "That's money you'll never see again";
+// Emotional comparisons based on 5-year loss amount
+// All hints now specifically reference "over 5 years"
+const getComparison = (fiveYearLoss: number) => {
+  if (fiveYearLoss >= 500000) return "That's a luxury car over 5 years";
+  if (fiveYearLoss >= 250000) return "That's a significant down payment on a house over 5 years";
+  if (fiveYearLoss >= 100000) return "That's multiple years of rent over 5 years";
+  if (fiveYearLoss >= 50000) return "That's a dream vacation every year for 5 years";
+  if (fiveYearLoss >= 25000) return "That's a new car over 5 years";
+  if (fiveYearLoss >= 10000) return "That's a weekend getaway every few months over 5 years";
+  if (fiveYearLoss >= 5000) return "That's a new laptop every year over 5 years";
+  return "That's money you'll never see again over 5 years";
 };
 
 export default function HomeScreen() {
@@ -49,7 +50,7 @@ export default function HomeScreen() {
   const yearlyLoss = numAmount * (selectedTimeUnit?.multiplier || 1);
   const monthlyLoss = yearlyLoss / 12;
   const fiveYearLoss = yearlyLoss * 5;
-  const comparison = getComparison(yearlyLoss);
+  const comparison = getComparison(fiveYearLoss);
 
   const handleScenarioSelect = (scenarioId: string) => {
     console.log('User selected scenario:', scenarioId);
@@ -58,7 +59,7 @@ export default function HomeScreen() {
   };
 
   const handleCalculate = () => {
-    console.log('Calculating loss:', { amount, timeUnit, yearlyLoss, multiplier: selectedTimeUnit?.multiplier });
+    console.log('Calculating loss:', { amount, timeUnit, yearlyLoss, fiveYearLoss, multiplier: selectedTimeUnit?.multiplier });
     Keyboard.dismiss();
     if (numAmount > 0) {
       setStep('results');
